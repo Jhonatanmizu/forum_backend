@@ -1,0 +1,39 @@
+version: '3.1'
+
+services:
+  app:
+    build: .
+    container_name: api-forum
+    environment:
+      - PORT=${PORT}
+      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_PORT=${DATABASE_PORT}
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - db
+    volumes:
+      - ./src:/app/src
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_USER: ${DATABASE_USERNAME}
+    ports:
+      - ${DATABASE_PORT}:${DATABASE_PORT}
+    networks:
+      - mysql-compose-network
+  admin:
+    image: adminer
+    ports:
+      - ${ADMIN_PORT}:${ADMIN_PORT}
+    networks:
+      - mysql-compose-network
+    depends_on:
+      - db
+
+networks:
+  mysql-compose-network:
+    driver: bridge
