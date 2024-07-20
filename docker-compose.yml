@@ -6,8 +6,11 @@ services:
     container_name: api-forum
     environment:
       - PORT=${PORT}
-      - DATABASE_URL=${DATABASE_URL}
       - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
     ports:
       - ${PORT}:${PORT}
     depends_on:
