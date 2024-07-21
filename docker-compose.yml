@@ -4,13 +4,8 @@ services:
   app:
     build: .
     container_name: api-forum
-    environment:
-      - PORT=${PORT}
-      - DATABASE_PORT=${DATABASE_PORT}
-      - DATABASE_HOST=${DATABASE_HOST}
-      - DATABASE_USERNAME=${DATABASE_USERNAME}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - DATABASE_NAME=${DATABASE_NAME}
+    env_file:
+      - .env
     ports:
       - ${PORT}:${PORT}
     depends_on:
@@ -18,25 +13,27 @@ services:
     volumes:
       - ./src:/app/src
   db:
-    image: mysql
+    image: postgres
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-      MYSQL_DATABASE: ${DATABASE_NAME}
-      MYSQL_USER: ${DATABASE_USERNAME}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_DB=${DATABASE_NAME}
     ports:
       - ${DATABASE_PORT}:${DATABASE_PORT}
-    networks:
-      - mysql-compose-network
+  # db:
+  #   image: mariadb:10
+  #   restart: always
+  #   environment:
+  #     - MARIADB_DATABASE=${DATABASE_NAME}
+  #     - MARIADB_ROOT_PASSWORD=${DATABASE_PASSWORD}
+  #     - MARIADB_USER=${DATABASE_USER}
+  #     - MARIADB_PORT=${DATABASE_PORT}
+  #   ports:
+  #     - ${DATABASE_PORT}:${DATABASE_PORT}
   admin:
     image: adminer
     ports:
-      - ${ADMIN_PORT}:${ADMIN_PORT}
-    networks:
-      - mysql-compose-network
+      - ${DATABASE_ADMIN_PORT}:${DATABASE_ADMIN_PORT}
     depends_on:
       - db
-
-networks:
-  mysql-compose-network:
-    driver: bridge
