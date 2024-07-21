@@ -1,22 +1,25 @@
-import * as schema from './schemas';
-import { Client } from 'pg';
-import { drizzle } from 'drizzle-orm/node-postgres';
+import { DataSource } from 'typeorm';
 
-export const DRIZZLE_PROVIDER = 'DRIZZLE_PROVIDER';
+export const DATA_SOURCE_PROVIDER = 'DATA_SOURCE';
+
+const SYNCHRONIZE = process.env.ENVIRONMENT !== 'production';
 
 export const databaseProviders = [
   {
-    provide: DRIZZLE_PROVIDER,
+    provide: DATA_SOURCE_PROVIDER,
     useFactory: async () => {
-      const client = new Client({
+      const dataSource = new DataSource({
+        type: 'mariadb',
         host: process.env.DATABASE_HOST,
-        user: process.env.DATABASE_USER,
-        database: process.env.DATABASE_NAME,
+        port: Number(process.env.DATABASE_PORT),
+        username: process.env.DATABASE_USER,
         password: process.env.DATABASE_PASSWORD,
+        database: process.env.DATABASE_NAME,
+        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+        synchronize: SYNCHRONIZE,
       });
-      await client.connect();
-      const db = drizzle(client, { schema });
-      return db;
+
+      return dataSource.initialize();
     },
   },
 ];
