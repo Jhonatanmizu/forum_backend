@@ -19,7 +19,7 @@ export class UsersService {
     return await this.userRepository.findAndCount();
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const result = await this.userRepository.findOne({
       where: {
         id,
@@ -33,7 +33,7 @@ export class UsersService {
     return result;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     const exists = await this.userRepository.findOne({ where: { id } });
 
     if (!exists) {
@@ -43,7 +43,7 @@ export class UsersService {
     return await this.userRepository.update(id, updateUserDto);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     return await this.userRepository.delete(id);
   }
 }
